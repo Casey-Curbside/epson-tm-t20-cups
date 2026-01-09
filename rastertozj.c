@@ -104,7 +104,7 @@ inline void skiplines(int size)
 }
 
 // get an option
-inline int getOptionChoiceIndex(const char * choiceName, ppd_file_t * ppd)
+static inline int getOptionChoiceIndex(const char * choiceName, ppd_file_t * ppd)
 {
 	ppd_choice_t * choice;
 	ppd_option_t * option;
@@ -121,7 +121,7 @@ inline int getOptionChoiceIndex(const char * choiceName, ppd_file_t * ppd)
 }
 
 
-inline void initializeSettings(char * commandLineOptionSettings)
+static inline void initializeSettings(char * commandLineOptionSettings)
 {
 	ppd_file_t *    ppd         = NULL;
 	cups_option_t * options     = NULL;
