@@ -1,7 +1,7 @@
 // To get required headers, run
 // sudo apt-get install libcups2-dev libcupsimage2-dev
 #include <cups/cups.h>
-#include <cups/ppd.h>
+#include <stdio.h>
 #include <cups/raster.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -85,7 +85,7 @@ inline int hi (int val)
 }
 
 // enter raster mode and set up x and y dimensions
-inline void rasterheader(int xsize, int ysize)
+static inline void rasterheader(int xsize, int ysize)
 {
 	outputCommand(rasterModeStartCommand);
 	mputchar(lo(xsize));
@@ -103,49 +103,25 @@ inline void skiplines(int size)
 	mputchar(size);
 }
 
-// get an option
-inline int getOptionChoiceIndex(const char * choiceName, ppd_file_t * ppd)
+static int getOptInt(const char *name, int num, cups_option_t *opts, int defval)
 {
-	ppd_choice_t * choice;
-	ppd_option_t * option;
-
-	choice = ppdFindMarkedChoice(ppd, choiceName);
-
-	if (choice == NULL)
-	{
-		if ((option = ppdFindOption(ppd, choiceName))          == NULL) return -1;
-		if ((choice = ppdFindChoice(option,option->defchoice)) == NULL) return -1;
-	}
-
-	return atoi(choice->choice);
+  const char *v = cupsGetOption(name, num, opts);
+  return v ? atoi(v) : defval;
 }
 
-
-inline void initializeSettings(char * commandLineOptionSettings)
+static inline void initializeSettings(char * commandLineOptionSettings)
 {
-	ppd_file_t *    ppd         = NULL;
-	cups_option_t * options     = NULL;
-	int             numOptions  = 0;
+	cups_option_t * options = NULL;
+	int numOptions = cupsParseOptions(commandLineOptionSettings, 0, &options);
 
-	ppd = ppdOpenFile(getenv("PPD"));
+	memset(&settings, 0x00, sizeof(settings));
 
-	ppdMarkDefaults(ppd);
+	settings.cashDrawer1  = getOptInt("CashDrawer1Setting", numOptions, options, 0);
+	settings.cashDrawer2  = getOptInt("CashDrawer2Setting", numOptions, options, 0);
+	settings.blankSpace   = getOptInt("BlankSpace"        , numOptions, options, 1);
+	settings.feedDist     = getOptInt("FeedDist"          , numOptions, options, 4);
 
-	numOptions = cupsParseOptions(commandLineOptionSettings, 0, &options);
-	if ((numOptions != 0) && (options != NULL))
-	{
-		cupsMarkOptions(ppd, numOptions, options);
-		cupsFreeOptions(numOptions, options);
-	}
-
-	memset(&settings, 0x00, sizeof(struct settings_));
-
-	settings.cashDrawer1  = getOptionChoiceIndex("CashDrawer1Setting", ppd);
-	settings.cashDrawer2  = getOptionChoiceIndex("CashDrawer2Setting", ppd);
-	settings.blankSpace   = getOptionChoiceIndex("BlankSpace"        , ppd);
-	settings.feedDist     = getOptionChoiceIndex("FeedDist"          , ppd);
-
-	ppdClose(ppd);
+	cupsFreeOptions(numOptions, options);
 }
 
 // sent on the beginning of print job
