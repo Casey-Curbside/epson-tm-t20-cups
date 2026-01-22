@@ -16,3 +16,5 @@ sudo apt-get install libcups2-dev libcupsimage2-dev g++ cups cups-client
 ```
 
 After that, `make` and `install` do the right thing.
+
+Alternatively, run `bash makeAndInstall` to do both in one step.
