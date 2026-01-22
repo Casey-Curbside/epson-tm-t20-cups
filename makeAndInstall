@@ -1,0 +1,13 @@
+#!/bin/bash
+set -euo pipefail
+
+sudo apt update
+sudo apt install -y \
+  build-essential \
+  libcups2-dev \
+  libcupsimage2-dev \
+  cups \
+  cups-client
+
+make
+sudo ./install

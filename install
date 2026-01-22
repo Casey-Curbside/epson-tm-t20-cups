@@ -1,14 +1,30 @@
 #!/bin/bash
 
-# Installs zj-58 driver
-# Tested as working under Ubuntu 14.04
+# Installs the TM-20 ppd to the Epson CUPS directory
+# and the rastertozj filter to the CUPS filters directory
+set -euo pipefail
 
-/etc/init.d/cups stop
-cp rastertozj /usr/lib/cups/filter/
-mkdir -p /usr/share/cups/model/zjiang
-cp ZJ-58.ppd /usr/share/cups/model/zjiang/
-cd /usr/lib/cups/filter
-chmod 755 rastertozj
-chown root:root rastertozj
-cd -
-/etc/init.d/cups start
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+
+FILTER_SRC="$SCRIPT_DIR/rastertozj"
+PPD_SRC="$SCRIPT_DIR/tm20.ppd"
+
+FILTER_DST_DIR="/usr/lib/cups/filter"
+PPD_DST_DIR="/usr/share/cups/model/epson"
+
+# Early exits
+[ -f "$FILTER_SRC" ] || { echo "Missing filter: $FILTER_SRC" >&2; exit 1; }
+[ -f "$PPD_SRC" ]    || { echo "Missing PPD: $PPD_SRC" >&2; exit 1; }
+
+sudo mkdir -p "$FILTER_DST_DIR" "$PPD_DST_DIR"
+
+sudo install -o root -g root -m 755 "$FILTER_SRC" "$FILTER_DST_DIR/rastertozj"
+sudo install -o root -g root -m 644 "$PPD_SRC" "$PPD_DST_DIR/tm20.ppd"
+
+if command -v systemctl >/dev/null 2>&1; then
+  sudo systemctl restart cups
+else
+  sudo /etc/init.d/cups restart
+fi
+
+echo "Installed filter + PPD and restarted CUPS."
