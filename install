@@ -12,6 +12,12 @@ PPD_SRC="$SCRIPT_DIR/tm20.ppd"
 FILTER_DST_DIR="/usr/lib/cups/filter"
 PPD_DST_DIR="/usr/share/cups/model/epson"
 
+# In case the user just wants to install
+sudo apt update
+sudo apt install -y \
+  cups \
+  cups-client
+
 # Early exits
 [ -f "$FILTER_SRC" ] || { echo "Missing filter: $FILTER_SRC" >&2; exit 1; }
 [ -f "$PPD_SRC" ]    || { echo "Missing PPD: $PPD_SRC" >&2; exit 1; }
