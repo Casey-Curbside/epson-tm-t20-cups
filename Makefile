@@ -1,17 +1,24 @@
-CC=gcc
-RM=rm -f
-CFLAGS=-Wl,-rpath,/usr/lib -Wall -fPIC -O3
-LDFLAGS=
-LDLIBS=-lcupsimage -lcups
+CC      ?= gcc
+RM      ?= rm -f
 
-SRCS=rastertozj.c
-OBJS=$(subst .c,.o,$(SRCS))
+CFLAGS  ?= -Wall -O2
+LDFLAGS ?=
+LDLIBS  ?= -lcupsimage -lcups
 
-all: rastertozj
+TARGET  := rastertozj
+SRCS    := rastertozj.c
+OBJS    := $(SRCS:.c=.o)
 
-rastertozj: $(OBJS)
-	gcc $(LDFLAGS) -o rastertozj rastertozj.o $(LDLIBS)
+# Avoids up-to-date issues
+.PHONY: all clean
 
-rastertozj.o: rastertozj.c
-	gcc $(CFLAGS) -c rastertozj.c
+all: $(TARGET)
 
+$(TARGET): $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+clean:
+	$(RM) $(TARGET) $(OBJS)
