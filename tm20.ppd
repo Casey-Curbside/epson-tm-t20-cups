@@ -44,12 +44,12 @@
 *PageRegion X80MMY297MM/80mm x 297mm:         "<</PageSize[226 842]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
 *PageRegion X80MMY3276MM/80mm x 3276mm:       "<</PageSize[226 9286]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
 
-*DefaultImageableArea: X80MMY64MM
+*DefaultImageableArea: X80MMY297MM
 
-*ImageableArea X80MMY64MM:               "0 0 226 181"
-*ImageableArea X80MMY210MM:              "0 0 226 595"
-*ImageableArea X80MMY297MM:              "0 0 226 842"
-*ImageableArea X80MMY3276MM:             "0 0 226 9286"
+*ImageableArea X80MMY64MM:               "0 0 210 181"
+*ImageableArea X80MMY210MM:              "0 0 210 595"
+*ImageableArea X80MMY297MM:              "0 0 210 842"
+*ImageableArea X80MMY3276MM:             "0 0 210 9286"
 
 *DefaultPaperDimension: X80MMY64MM
 
